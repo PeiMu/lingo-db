@@ -14,6 +14,11 @@
 # LingoDB
 LingoDB is a cutting-edge data processing system that leverages compiler technology to achieve unprecedented flexibility and extensibility without sacrificing performance. It supports a wide range of data-processing workflows beyond relational SQL queries, thanks to declarative sub-operators. Furthermore, LingoDB can perform cross-domain optimization by interleaving optimization passes of different domains and its flexibility enables sustainable support for heterogeneous hardware.
 
+# Compile From Source Code
+```bash
+CC=clang-20 CXX=clang++-20 make build-release
+```
+
 # Using LingoDB
 You can try out LingoDB through different ways:
 1. Use the hosted [SQL Webinterface](https://www.lingo-db.com/interface/)
