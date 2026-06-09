@@ -21,6 +21,27 @@ class TimingProcessor {
    }
 };
 
+class TimingCollector : public TimingProcessor {
+   std::unordered_map<std::string, double> timing;
+
+   public:
+   void addTiming(const std::unordered_map<std::string, double>& timing) override {
+      this->timing.insert(timing.begin(), timing.end());
+   }
+
+   void process() override {
+      double total = 0.0;
+      for (const auto t : timing | std::ranges::views::values) {
+         total += t;
+      }
+      timing["total"] = total;
+   }
+
+   const std::unordered_map<std::string, double>& getTiming() const {
+      return timing;
+   }
+};
+
 class TimingPrinter : public TimingProcessor {
    std::unordered_map<std::string, double> timing;
    std::string queryName;
