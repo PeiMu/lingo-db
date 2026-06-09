@@ -156,6 +156,8 @@ class QueryExecutionTask : public lingodb::scheduler::TaskWithContext {
    }
 };
 
+double estimateQueryRows(runtime::Session& session, const std::string& sql);
+
 } // namespace lingodb::execution
 
 #endif //LINGODB_EXECUTION_EXECUTION_H

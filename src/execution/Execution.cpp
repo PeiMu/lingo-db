@@ -450,4 +450,46 @@ std::unique_ptr<QueryExecuter> QueryExecuter::createDefaultExecuter(std::unique_
    return std::make_unique<DefaultQueryExecuter>(std::move(queryExecutionConfig), session.createExecutionContext());
 }
 
+double estimateQueryRows(runtime::Session& session, const std::string& sql) {
+   auto executionContext = session.createExecutionContext();
+   auto* catalog = executionContext->getSession().getCatalog().get();
+
+   auto frontend = createSQLFrontend();
+   auto* context = new mlir::MLIRContext();
+   initializeContext(*context, false);
+   frontend->setContext(context);
+   frontend->setCatalog(catalog);
+   frontend->loadFromString(sql);
+
+   if (frontend->getError()) {
+      delete context;
+      return -1;
+   }
+
+   mlir::ModuleOp& moduleOp = *frontend->getModule();
+
+   auto queryOptimizer = std::make_unique<DefaultQueryOptimizer>();
+   queryOptimizer->setCatalog(catalog);
+   queryOptimizer->disableVerification();
+   QueryOptimizer& opt = *queryOptimizer;
+   opt.optimize(moduleOp);
+
+   if (opt.getError()) {
+      delete context;
+      return -1;
+   }
+
+   double estimatedRows = -1;
+   moduleOp.walk([&](mlir::Operation* op) {
+      if (auto floatAttr = op->getAttrOfType<mlir::FloatAttr>("rows")) {
+         estimatedRows = floatAttr.getValueAsDouble();
+      }
+   });
+
+   queryOptimizer.reset();
+   frontend.reset();
+   delete context;
+   return estimatedRows;
+}
+
 } // namespace lingodb::execution

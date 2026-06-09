@@ -80,6 +80,7 @@ class Catalog {
    }
 
    void insertEntry(std::shared_ptr<CatalogEntry> entry, bool replace = false);
+   void removeEntry(const std::string& name) { entries.erase(name); }
    static std::shared_ptr<Catalog> create(std::string dbDir, bool eagerLoading);
    static std::shared_ptr<Catalog> createEmpty();
    ~Catalog() {
