@@ -15,8 +15,31 @@
 LingoDB is a cutting-edge data processing system that leverages compiler technology to achieve unprecedented flexibility and extensibility without sacrificing performance. It supports a wide range of data-processing workflows beyond relational SQL queries, thanks to declarative sub-operators. Furthermore, LingoDB can perform cross-domain optimization by interleaving optimization passes of different domains and its flexibility enables sustainable support for heterogeneous hardware.
 
 # Compile From Source Code
+
+## Prerequisites (Debian 12 / bookworm)
+
+Install build dependencies:
+```bash
+sudo apt install cmake ninja-build clang-20 llvm-20-dev libmlir-20-dev mlir-20-tools libclang-20-dev libpolly-20-dev libarrow-dev libboost-context-dev
+```
+
+Install packages from Debian trixie (GCC 14 libstdc++ is needed for C++20 `<format>` support; Catch2 v3 is needed for unit tests):
+```bash
+echo 'deb http://deb.debian.org/debian/ trixie main' | sudo tee /etc/apt/sources.list.d/trixie.list
+echo -e 'Package: *\nPin: release n=trixie\nPin-Priority: 100' | sudo tee /etc/apt/preferences.d/trixie.pref
+sudo apt update
+sudo apt install -t trixie gcc-14 g++-14 libstdc++-14-dev catch2
+```
+
+## Build
+
 ```bash
 CC=clang-20 CXX=clang++-20 make build-release
+```
+
+To enable the TPDE baseline backend:
+```bash
+CC=clang-20 CXX=clang++-20 make build-release ENABLE_BASELINE_BACKEND=ON
 ```
 
 # Using LingoDB

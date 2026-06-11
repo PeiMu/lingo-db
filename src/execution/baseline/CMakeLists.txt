@@ -49,7 +49,6 @@ add_custom_command(
         OUTPUT ${BC_OUTPUT}
         COMMAND ${CLANG_EXECUTABLE} -c -emit-llvm -ffreestanding -fcf-protection=none -O3 -fomit-frame-pointer -fno-math-errno --target=${TPDE_TARGET} -march=${TPDE_ARCH} -o ${BC_OUTPUT} ${CMAKE_CURRENT_SOURCE_DIR}/snippets.c
         DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/snippets.c
-        DEPENDS_EXPLICIT_ONLY
         COMMENT "Generating LLVM bitcode for ${CMAKE_HOST_SYSTEM_PROCESSOR}"
 )
 
@@ -57,7 +56,6 @@ add_custom_command(
         OUTPUT ${HPP_OUTPUT}
         COMMAND $<TARGET_FILE:tpde::tpde_encodegen> -o ${HPP_OUTPUT} ${BC_OUTPUT}
         DEPENDS ${BC_OUTPUT} tpde::tpde_encodegen
-        DEPENDS_EXPLICIT_ONLY
         COMMENT "Generating snippet encoders header for ${CMAKE_HOST_SYSTEM_PROCESSOR}"
 )
 

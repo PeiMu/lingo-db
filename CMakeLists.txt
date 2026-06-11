@@ -82,6 +82,13 @@ include_directories(${LLVM_INCLUDE_DIRS})
 include_directories(${MLIR_INCLUDE_DIRS})
 include_directories(${CLANG_INCLUDE_DIRS})
 
+# Clang-20's cxxabi.h (guard: __CXXABI_H) in LLVM_INCLUDE_DIRS conflicts with
+# GCC libstdc++'s version (guard: _CXXABI_H) due to differing return types for
+# __cxa_init_primary_exception. Pre-defining __CXXABI_H skips the LLVM copy.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND EXISTS "${LLVM_INCLUDE_DIRS}/cxxabi.h")
+    add_compile_definitions(__CXXABI_H)
+endif()
+
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/vendored)
 
